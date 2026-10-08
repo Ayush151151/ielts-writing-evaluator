@@ -58,42 +58,64 @@ hr { border-color:var(--line); }
 
 # ------------------------------------------------------------------ sidebar
 with st.sidebar:
-    st.header("Settings")
+    st.caption("EXAM SETTINGS")
+    st.header("Choose your task")
+    task_type = st.radio(
+        "Task type",
+        options=["task2", "task1"],
+        format_func=lambda t: "Task 2 · Essay" if t == "task2" else "Task 1 · Report",
+        label_visibility="collapsed",
+    )
+    st.caption(f"Recommended minimum: {config['min_words'][task_type]} words")
+    if task_type == "task1":
+        st.caption("Describe the chart or data in the task prompt. Images are not analysed.")
+    st.divider()
+    st.caption("SCORING MODEL")
     provider = st.selectbox(
         "LLM provider",
         options=list(config["models"].keys()),
         index=list(config["models"].keys()).index(config["provider"]),
     )
     st.caption(f"Model: `{config['models'][provider]}`")
-    task_type = st.radio(
-        "Task type",
-        options=["task2", "task1"],
-        format_func=lambda t: "Task 2 (essay)" if t == "task2" else "Task 1 (report)",
+
+
+st.markdown('<p class="eyebrow">IELTS · WRITING WORKSHOP</p>', unsafe_allow_html=True)
+st.title("IELTS Writing Assessment")
+st.markdown('<p class="lede">Get a criterion by criterion score, useful corrections and a focused plan for your next practice session.</p>', unsafe_allow_html=True)
+st.divider()
+
+prompt_col, essay_col = st.columns([0.82, 1.55], gap="large")
+with prompt_col:
+    st.markdown("#### 01 · The task")
+    question = st.text_area(
+        "Question / task prompt",
+        height=185,
+        placeholder="Paste the full question here…",
+        label_visibility="collapsed",
     )
-    st.caption(f"Minimum words: {config['min_words'][task_type]}")
-    if task_type == "task1":
-        st.info(
-            "Text only: for Task 1, describe the chart or data in the question box, "
-            "since images are not analysed."
-        )
+    st.caption("Include the full prompt so your response can be checked against it.")
+with essay_col:
+    st.markdown("#### 02 · Your response")
+    uploaded = st.file_uploader("Drop a .txt essay here", type=["txt"], label_visibility="collapsed")
+    if uploaded:
+        st.caption(f"Selected file: **{uploaded.name}**")
+    default_text = uploaded.read().decode("utf-8", errors="ignore") if uploaded else ""
+    essay = st.text_area(
+        "Your essay",
+        value=default_text,
+        height=280,
+        placeholder="Write or paste your response here…",
+        label_visibility="collapsed",
+    )
+    word_count = evaluator.count_words(essay)
+    minimum = config["min_words"][task_type]
+    st.markdown(f'<p class="score-note">{word_count} words <span style="padding:0 .45rem">·</span> {minimum} word minimum</p>', unsafe_allow_html=True)
 
-
-# --------------------------------------------------------------------- input
-st.title("✍️ IELTS Writing Evaluator")
-st.write("Paste your essay to get a band score, error corrections and a study plan.")
-
-question = st.text_area(
-    "Question / task prompt",
-    height=100,
-    placeholder="Some people think that ... To what extent do you agree or disagree?",
-)
-
-uploaded = st.file_uploader("Or upload your essay as a .txt file", type=["txt"])
-default_text = uploaded.read().decode("utf-8", errors="ignore") if uploaded else ""
-essay = st.text_area("Your essay", value=default_text, height=300)
-st.caption(f"Word count: {evaluator.count_words(essay)}")
-
-run = st.button("Evaluate my essay", type="primary")
+action_col, note_col = st.columns([1, 2.5], vertical_alignment="center")
+with action_col:
+    run = st.button("Get my review", type="primary", use_container_width=True)
+with note_col:
+    st.caption("Usually takes under a minute · Download the full report when it’s ready")
 
 
 # ------------------------------------------------------------------- results
