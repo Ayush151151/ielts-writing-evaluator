@@ -1,4 +1,4 @@
-"""Streamlit user interface. Run with:  streamlit run app.py"""
+"""Streamlit user interface. Run with: streamlit run app.py"""
 
 import json
 
@@ -9,7 +9,6 @@ import evaluator
 from llm_client import LLMError
 
 load_dotenv()
-
 st.set_page_config(page_title="IELTS Writing Evaluator", page_icon="✍️", layout="wide")
 
 CRITERIA_LABELS = {
@@ -18,7 +17,6 @@ CRITERIA_LABELS = {
     "lexical_resource": "Lexical Resource",
     "grammatical_range_accuracy": "Grammar Range & Accuracy",
 }
-
 config = evaluator.load_yaml("config.yaml")
 
 st.markdown("""
@@ -56,7 +54,6 @@ hr { border-color:var(--line); }
 """, unsafe_allow_html=True)
 
 
-# ------------------------------------------------------------------ sidebar
 with st.sidebar:
     st.caption("EXAM SETTINGS")
     st.header("Choose your task")
@@ -118,31 +115,32 @@ with note_col:
     st.caption("Usually takes under a minute · Download the full report when it’s ready")
 
 
-# ------------------------------------------------------------------- results
 def show_results(result: dict) -> None:
     for warning in result["warnings"]:
         st.warning(warning)
 
-    st.subheader("Band scores")
+    st.divider()
+    st.markdown('<p class="eyebrow">YOUR REVIEW</p>', unsafe_allow_html=True)
+    st.subheader("Band profile")
     cols = st.columns(5)
     cols[0].metric("Overall", result["overall_band"])
     for col, key in zip(cols[1:], CRITERIA_LABELS):
         col.metric(CRITERIA_LABELS[key], result["criteria"][key]["band"])
 
-    st.subheader("Criterion feedback")
+    st.subheader("Feedback by criterion")
     for key, label in CRITERIA_LABELS.items():
         block = result["criteria"][key]
-        with st.expander(f"{label}: Band {block['band']}"):
+        with st.expander(f"{label} · Band {block['band']}"):
             st.write(block["feedback"])
             left, right = st.columns(2)
-            left.markdown("**Strengths**")
+            left.markdown("**Working well**")
             for item in block["strengths"]:
                 left.markdown(f"- {item}")
-            right.markdown("**To improve**")
+            right.markdown("**Next to improve**")
             for item in block["weaknesses"]:
                 right.markdown(f"- {item}")
 
-    st.subheader("Errors found")
+    st.subheader("Corrections")
     if result["errors"]:
         st.dataframe(
             [
@@ -168,17 +166,19 @@ def show_results(result: dict) -> None:
 
     paragraph = result["improved_paragraph"]
     if paragraph.get("rewritten"):
-        st.subheader("Weakest paragraph, rewritten one band higher")
+        st.subheader("A stronger version of your weakest paragraph")
         before, after = st.columns(2)
-        before.markdown("**Original**")
-        before.write(paragraph.get("original", ""))
-        after.markdown("**Improved**")
-        after.write(paragraph["rewritten"])
+        with before:
+            st.markdown("**Your paragraph**")
+            st.write(paragraph.get("original", ""))
+        with after:
+            st.markdown("**One possible revision**")
+            st.write(paragraph["rewritten"])
         st.caption(paragraph.get("why_better", ""))
 
-    st.subheader("Top priorities to practise")
+    st.subheader("Your next practice steps")
     for i, item in enumerate(result["top_priorities"], start=1):
-        st.markdown(f"{i}. {item}")
+        st.markdown(f"**{i}.** {item}")
 
     st.download_button(
         "Download full report (JSON)",
@@ -190,7 +190,7 @@ def show_results(result: dict) -> None:
 
 if run:
     try:
-        with st.spinner("The examiner is marking your essay..."):
+        with st.spinner("Reviewing your writing…"):
             result = evaluator.evaluate_essay(
                 essay=essay, question=question, task_type=task_type, provider=provider
             )
