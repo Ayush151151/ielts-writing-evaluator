@@ -1,0 +1,20 @@
+# Project configuration. API keys are NOT stored here; they go in .env
+
+# Which LLM provider to use: "gemini" or "anthropic"
+provider: gemini
+
+# Model name for each provider. Change these if a model is renamed or retired.
+models:
+  gemini: gemini-3.5-flash-lite
+  anthropic: claude-sonnet-4-5
+
+# Low temperature = more consistent, repeatable scoring
+temperature: 0.2
+
+# Maximum length of the model's reply (the JSON report is fairly long)
+max_tokens: 8192
+
+# Official minimum word counts
+min_words:
+  task1: 150
+  task2: 250
