@@ -21,6 +21,40 @@ CRITERIA_LABELS = {
 
 config = evaluator.load_yaml("config.yaml")
 
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@500;600;700&display=swap');
+:root { --ink:#202923; --muted:#68736b; --paper:#f6f5f0; --green:#315c48; --line:#e3e5dd; --white:#fff; }
+.stApp { background:var(--paper); color:var(--ink); font-family:'DM Sans',sans-serif; }
+[data-testid="stHeader"] { background:transparent; }
+.block-container { max-width:1160px; padding:2.5rem 2rem 5rem; }
+h1,h2,h3,h4 { font-family:'Source Serif 4',Georgia,serif !important; color:var(--ink); letter-spacing:-.025em; }
+h1,h2,h3,h4 { color:#202923 !important; }
+h1 { font-size:3.25rem !important; line-height:1.04 !important; max-width:760px; white-space:pre-line; }
+h2 { margin-top:1.1rem !important; }
+[data-testid="stSidebar"] { background:#eeede7; border-right:1px solid var(--line); }
+[data-testid="stTextArea"] textarea { background:var(--white); border:1px solid var(--line); border-radius:8px; line-height:1.75; padding:1rem; }
+[data-testid="stFileUploader"] section { background:#fff !important; border:1px dashed #9eafa2; border-radius:8px; color:var(--ink) !important; }
+[data-testid="stFileUploader"] section * { color:var(--ink) !important; }
+[data-testid="stFileUploader"] button { background:var(--green) !important; border:1px solid var(--green) !important; color:#fff !important; border-radius:5px !important; }
+[data-testid="stFileUploader"] button * { color:#fff !important; }
+.stButton>button,.stDownloadButton>button { border-radius:6px; min-height:2.8rem; padding:0 1rem; font-weight:600; }
+.stButton>button[kind=primary] { background:var(--green); border-color:var(--green); }
+[data-testid="stMetric"] { background:var(--white); border:1px solid var(--line); border-radius:8px; padding:1rem; }
+[data-testid="stMetricLabel"], [data-testid="stMetricLabel"] *, [data-testid="stMetricValue"], [data-testid="stMetricValue"] * { opacity:1 !important; visibility:visible !important; }
+[data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * { color:#4d5951 !important; }
+[data-testid="stMetricValue"], [data-testid="stMetricValue"] * { color:var(--green) !important; font-family:'Source Serif 4',Georgia,serif; }
+[data-testid="stExpander"] { background:var(--white); border:1px solid var(--line); border-radius:8px; margin:.4rem 0; }
+[data-testid="stExpander"] summary, [data-testid="stExpander"] summary * { color:#202923 !important; opacity:1 !important; visibility:visible !important; }
+[data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+.eyebrow { color:#587261; font-size:.75rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:.5rem; }
+.lede { max-width:690px; color:#58635c; font-size:1.05rem; line-height:1.65; }
+.score-note { color:#69756d; font-size:.88rem; }
+hr { border-color:var(--line); }
+@media(max-width:760px) { h1 { font-size:2.45rem !important; } .block-container { padding:1.4rem 1rem 3rem; } }
+</style>
+""", unsafe_allow_html=True)
+
 
 # ------------------------------------------------------------------ sidebar
 with st.sidebar:
